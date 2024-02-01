@@ -1,0 +1,7 @@
+.journal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/*# sourceMappingURL=JournalList.css.map */
