@@ -8,42 +8,58 @@ import Header from "./components/Header/Header.jsx";
 import JournalList from "./components/JournalList/JournalList.jsx";
 import JournalAddButton from "./components/JournalAddButton/JournalAddButton.jsx";
 import JournalForm from "./components/JournalForm/JournalForm.jsx";
+import {useEffect, useState} from "react";
 
 function App() {
- const data = [
-     {
-         title: 'Подготовка к обновлению курсов',
-         text: 'Горные походы открывают удивительные природные ландшафты',
-         date: new Date()
-     }
- ]
+    const [items, setItems] = useState([])
 
+    useEffect(()=>{
+        const data = JSON.parse(localStorage.getItem('data'))
+        if(data){
+            setItems(data.map(item=>({
+                ...item,
+                date: new Date(item.date)
+            })))
+        }
+    }, [])
+    useEffect(()=>{
+        if(items.length){
+            localStorage.setItem('data', JSON.stringify(items))
+        }
+    }, [items])
+ const addItem = (item)=>{
+        debugger
+        setItems(data=> [...data, {
+            id: data.length>0 ? Math.max(...data.map(i=>i.id))+1 : 1,
+            post: item.post,
+            title: item.title,
+            tag: item.tag,
+            date: new Date(item.date)
+        }])
+    }
+    const sortItems = (a, b) => {
+        if(a.date < b.date){
+            return 1
+        } else return -1
+    }
   return (
     <div className='app'>
         <LeftPanel>
             <Header/>
             <JournalAddButton/>
             <JournalList>
-                <CardButton>
-                    <JournalItem
-                        title={data[0].title}
-                        text={data[0].text}
-                        date={data[0].date}
-                    />
-                </CardButton>
-                <CardButton>
-                    <JournalItem
-                        title={data[0].title}
-                        text={data[0].text}
-                        date={data[0].date}
-                    /></CardButton>
+                {items.length===0 ? <p>Запесей пока нет, добавьте первую</p> : items.sort(sortItems).map(el=> <CardButton key={el.id}><JournalItem
+                    title={el.title}
+                    post={el.post}
+                    date={el.date}></JournalItem></CardButton>)}
             </JournalList>
         </LeftPanel>
         <Body>
-            <JournalForm/>
+            <JournalForm addItem={addItem}/>
         </Body>
     </div>
   )
 }
 
 export default App;
+
