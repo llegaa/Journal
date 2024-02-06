@@ -41,6 +41,4 @@ export function formReducer(state, action) {
                 isFormReadyToSubmit: false}
         }
     }
-
-
 }
