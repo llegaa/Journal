@@ -8,50 +8,44 @@ import Header from "./components/Header/Header.jsx";
 import JournalList from "./components/JournalList/JournalList.jsx";
 import JournalAddButton from "./components/JournalAddButton/JournalAddButton.jsx";
 import JournalForm from "./components/JournalForm/JournalForm.jsx";
-import {useEffect, useState} from "react";
+import {useLocalstorage} from "./hooks/use-localstorage.hook.js";
 
+function mapItems(items) {
+    if (!items) {
+        return [];
+    }
+    return items.map(i => ({
+        ...i,
+        date: new Date(i.date)
+    }));
+}
 function App() {
-    const [items, setItems] = useState([])
+    const [items, setItems] = useLocalstorage('data')
 
-    useEffect(()=>{
-        const data = JSON.parse(localStorage.getItem('data'))
-        if(data){
-            setItems(data.map(item=>({
+    const addItem = item => {
+        if (!item.id) {
+            setItems([...mapItems(items), {
                 ...item,
-                date: new Date(item.date)
-            })))
+                date: new Date(item.date),
+                id: items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1
+            }]);
+        } else {
+            setItems([...mapItems(items).map(i => {
+                if (i.id === item.id) {
+                    return {
+                        ...item
+                    };
+                }
+                return i;
+            })]);
         }
-    }, [])
-    useEffect(()=>{
-        if(items.length){
-            localStorage.setItem('data', JSON.stringify(items))
-        }
-    }, [items])
- const addItem = (item)=>{
-        debugger
-        setItems(data=> [...data, {
-            id: data.length>0 ? Math.max(...data.map(i=>i.id))+1 : 1,
-            post: item.post,
-            title: item.title,
-            tag: item.tag,
-            date: new Date(item.date)
-        }])
-    }
-    const sortItems = (a, b) => {
-        if(a.date < b.date){
-            return 1
-        } else return -1
-    }
+    };
   return (
     <div className='app'>
         <LeftPanel>
             <Header/>
             <JournalAddButton/>
-            <JournalList>
-                {items.length===0 ? <p>Запесей пока нет, добавьте первую</p> : items.sort(sortItems).map(el=> <CardButton key={el.id}><JournalItem
-                    title={el.title}
-                    post={el.post}
-                    date={el.date}></JournalItem></CardButton>)}
+            <JournalList items={mapItems(items)}>
             </JournalList>
         </LeftPanel>
         <Body>

@@ -64,7 +64,7 @@ function JournalForm({addItem}) {
                 <label htmlFor='tag' className={style['form-label']}>
                     <img src='/folder.svg' alt='Папка'/>
                     <span>Метки</span></label>
-                <Input isValid={isValid.post} type='text' name='tag' value={values.tag} onChange={inputChange}/>
+                <Input isValid={isValid.tag} type='text' name='tag' value={values.tag} onChange={inputChange}/>
             </div>
             <textarea ref={postRef} name="post" className={classNames(style.input,
                 {[style.invalid]: !isValid.post}
