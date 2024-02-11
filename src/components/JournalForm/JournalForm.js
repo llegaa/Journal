@@ -1,3 +1,6 @@
+import {useContext} from "react";
+import {UserContext} from "../../context/user.context.jsx";
+
 export const INITIAL_STATE = {
     isValid: {
         post: true,
@@ -8,7 +11,8 @@ export const INITIAL_STATE = {
         post: '',
         title: '',
         date: '',
-        tag: ''
+        tag: '',
+        userId: 1
     },
     isFormReadyToSubmit: false
 }
@@ -21,12 +25,14 @@ export function formReducer(state, action) {
             const titleValidity = state.values.title?.trim().length
             const postValidity = state.values.post?.trim().length
             const dataValidity = state.values.date
+            const user = state.values.userId
             return {
                 ...state,
                 isValid: {
                     post: postValidity,
                     title: titleValidity,
-                    date: dataValidity
+                    date: dataValidity,
+                    userId: user
                 },
                 isFormReadyToSubmit: titleValidity && postValidity && dataValidity
             }

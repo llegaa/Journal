@@ -1,7 +1,11 @@
-import './Header.css'
+import SelectUser from "../SelectUser/SelectUser.jsx";
+import Logo from "../Logo/Logo.jsx";
+
 function Header() {
-    return(
-        <img className='logo' src='/logo.svg' alt='Доготип Журнала'/>
+    return(<>
+            <Logo image='/logo.svg'/>
+            <SelectUser />
+        </>
     )
 }
 export default Header

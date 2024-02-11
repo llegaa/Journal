@@ -1,7 +1,8 @@
 import './Button.css'
-function Button({text}){
+import {memo} from "react";
+function Button({children, onClick}){
     return(
-            <button className='button accent'>{text}</button>
+            <button onClick={onClick} className='button accent'>{children}</button>
     )
 }
-export default Button
+export default memo(Button)

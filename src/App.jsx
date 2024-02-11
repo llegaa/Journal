@@ -9,6 +9,9 @@ import JournalList from "./components/JournalList/JournalList.jsx";
 import JournalAddButton from "./components/JournalAddButton/JournalAddButton.jsx";
 import JournalForm from "./components/JournalForm/JournalForm.jsx";
 import {useLocalstorage} from "./hooks/use-localstorage.hook.js";
+import {UserContextProvider} from "./context/user.context.jsx";
+import {useState} from "react";
+
 
 function mapItems(items) {
     if (!items) {
@@ -21,8 +24,10 @@ function mapItems(items) {
 }
 function App() {
     const [items, setItems] = useLocalstorage('data')
+    const [selectedItem, setSelectedItem] = useState(null)
 
     const addItem = item => {
+        if(!item.id){
         if (!item.id) {
             setItems([...mapItems(items), {
                 ...item,
@@ -38,20 +43,34 @@ function App() {
                 }
                 return i;
             })]);
+        }}else{
+            setItems([...mapItems(items).map(i => {
+                if (i.id === item.id) {
+                    return {
+                        ...item
+                    };
+                }
+                return i;
+            })]);
         }
     };
+    const deleteItem = (id)=>{
+        setItems([...items.filter(i=>i.id !== id)])
+    }
   return (
-    <div className='app'>
-        <LeftPanel>
-            <Header/>
-            <JournalAddButton/>
-            <JournalList items={mapItems(items)}>
-            </JournalList>
-        </LeftPanel>
-        <Body>
-            <JournalForm addItem={addItem}/>
-        </Body>
-    </div>
+      <UserContextProvider>
+        <div className='app'>
+            <LeftPanel>
+                <Header/>
+                <JournalAddButton clearForm={()=>setSelectedItem(null)}/>
+                <JournalList setItem={setSelectedItem} items={mapItems(items)}>
+                </JournalList>
+            </LeftPanel>
+            <Body>
+                <JournalForm onDelete={deleteItem} data={selectedItem} addItem={addItem}/>
+            </Body>
+        </div>
+      </UserContextProvider>
   )
 }
 
